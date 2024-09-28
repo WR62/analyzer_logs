@@ -1,0 +1,41 @@
+{
+    "top_ips": {
+        "193.106.31.130": 235209,
+        "198.50.156.189": 167812,
+        "5.112.235.245": 166722
+    },
+    "top_longest": [
+        {
+            "duration": 10000,
+            "ip": "46.229.168.152",
+            "date": "[18/Aug/2019:23:47:49 +0200]",
+            "method": "GET",
+            "url": "http://www.semrush.com/bot.html)"
+        },
+        {
+            "duration": 10000,
+            "ip": "217.149.162.72",
+            "date": "[02/Aug/2019:20:52:34 +0200]",
+            "method": "GET",
+            "url": "http://www.almhuette-raith.at/index.php?option=com_phocagallery&view=category&id=1&Itemid=53"
+        },
+        {
+            "duration": 10000,
+            "ip": "51.75.7.84",
+            "date": "[06/Jul/2019:18:37:39 +0200]",
+            "method": "POST",
+            "url": "http://www.almhuette-raith.at/administrator/index.php?option=com_login"
+        }
+    ],
+    "total_stat": {
+        "GET": 2247846,
+        "POST": 918794,
+        "HEAD": 49971,
+        "PUT": 70,
+        "OPTIONS": 39,
+        "DELETE": 1,
+        "ADMIN": 1,
+        "QCC": 1
+    },
+    "total_requests": 3216723
+}
