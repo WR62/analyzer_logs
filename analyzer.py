@@ -5,25 +5,54 @@ import os
 from pathlib import Path
 import json
 
-if __name__ == '__main__':
+
+def choose_dir():
     # Выбор директории с логами
     root = tk.Tk()
     root.withdraw()
-    folder_selected = fd.askdirectory(master=root, mustexist=True)
+    folder_select = fd.askdirectory(master=root, mustexist=True)
     root.destroy()
     # при отмене выбора используем текущую директорию
-    if len(folder_selected) == 0:
-        folder_selected = os.getcwd()
+    if len(folder_select) == 0:
+        folder_select = os.getcwd()
+    return folder_select
+
+
+def get_list_log_files(folder: str) -> list:
     # получаем список лог-файлов
-    files = Path(folder_selected).glob('*.log')
-    files = list(map(str, files))
+    list_files = Path(folder).glob('*.log')
+    list_files = list(map(str, list_files))
+    if len(list_files) == 0:
+        raise Exception('Log-files not found in given directory!')
+    else:
+        return list_files
+
+
+def reverse_sorting_dict(in_dict: dict) -> list:
+    # Сортировка словаря по убыванию и получение трех максимальных значений
+    sorted_ = sorted(in_dict.items(), key=lambda item: item[1], reverse=True)
+    return sorted_[:3]
+
+
+def create_output_json():
+    final_res = dict()
+    final_res['top_ips'] = dict(sorted_counter_ip_3items)
+    final_res['top_longest'] = [first_longest, second_longest, third_longest]
+    final_res['total_stat'] = counter_types_requests
+    final_res['total_requests'] = total_requests
+    return json.dumps(final_res, indent=4)
+
+
+if __name__ == '__main__':
+    folder_selected = choose_dir()
+    files = get_list_log_files(folder_selected)
     # Обрабатываем каждый файл и присваиваем ему уникальное имя
     for file in files:
         name_file = 'result_' + Path(file).stem + '.json'
         with open(file, 'r') as fl:
-            total_requests = 0                  # Общее количество запросов
-            counter_types_requests = dict()     # Словарь счетчиков по типам запросов
-            counter_ip_requests = dict()        # Словарь счетчиков по ip-адресам
+            total_requests = 0  # Общее количество запросов
+            counter_types_requests = dict()  # Словарь счетчиков по типам запросов
+            counter_ip_requests = dict()  # Словарь счетчиков по ip-адресам
             # Словари с информацией по трем самым длинным запросам
             first_longest = {'duration': 0}
             second_longest = {'duration': 0}
@@ -69,18 +98,12 @@ if __name__ == '__main__':
                         third_longest['url'] = url
                         third_longest['duration'] = duration
 
-                if total_requests % 100000 == 0:            # Информация, что скрипт не завис
+                if total_requests % 100000 == 0:  # Информация, что скрипт не завис
                     print(f'{total_requests} records processed')
     # Сортировка словаря с количеством запросов по ip для поиска трех максимальных
-    sorted_counter_ip = sorted(counter_ip_requests.items(), key=lambda item: item[1], reverse=True)
-    sorted_counter_ip = sorted_counter_ip[:3]
+    sorted_counter_ip_3items = reverse_sorting_dict(counter_ip_requests)
 
-    final_result = dict()
-    final_result['top_ips'] = dict(sorted_counter_ip)
-    final_result['top_longest'] = [first_longest, second_longest, third_longest]
-    final_result['total_stat'] = counter_types_requests
-    final_result['total_requests'] = total_requests
-    final_json = json.dumps(final_result, indent=4)
+    final_json = create_output_json()
     with open(name_file, 'w') as outfile:
         outfile.write(final_json)
     print(final_json)
